@@ -1,0 +1,141 @@
+<template>
+    <div class="bg-gradient-primary cont">
+        <div class="container">
+            <div class="row justify-content-center my-auto">
+                <div class="col-xl-10 col-lg-12 col-md-9 mt-5">
+                    <div class="card o-hidden border-0 shadow-lg my-5">
+                        <div class="card-body p-0">
+                            <!-- Nested Row within Card Body -->
+                            <div class="row">
+                                <div
+                                    class="col-lg-6 d-none d-lg-block bg-login-image"
+                                ></div>
+                                <div class="col-lg-6">
+                                    <div class="p-5">
+                                        <div class="text-center">
+                                            <h1 class="h4 text-gray-900 mb-4">
+                                                Welcome Back!
+                                            </h1>
+                                        </div>
+                                        <form
+                                            class="user"
+                                            @submit.prevent="login()"
+                                        >
+                                            <div class="form-group">
+                                                <input
+                                                    type="email"
+                                                    name="email"
+                                                    class="form-control form-control-user"
+                                                    id="exampleInputEmail"
+                                                    aria-describedby="emailHelp"
+                                                    placeholder="Enter Email Address..."
+                                                    v-model="form.email"
+                                                />
+                                                <span
+                                                    class="text-danger"
+                                                    v-if="errors.email"
+                                                    >{{ errors.email[0] }}</span
+                                                >
+                                            </div>
+                                            <div class="form-group">
+                                                <input
+                                                    type="password"
+                                                    name="password"
+                                                    class="form-control form-control-user"
+                                                    id="exampleInputPassword"
+                                                    placeholder="Password"
+                                                    v-model="form.password"
+                                                />
+                                                <span
+                                                    class="text-danger"
+                                                    v-if="errors.password"
+                                                    >{{
+                                                        errors.password[0]
+                                                    }}</span
+                                                >
+                                            </div>
+                                            <div class="form-group">
+                                                <div
+                                                    class="custom-control custom-checkbox small"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        name="remember"
+                                                        class="custom-control-input"
+                                                        id="customCheck"
+                                                        v-model="form.remember"
+                                                    />
+                                                    <label
+                                                        class="custom-control-label"
+                                                        for="customCheck"
+                                                        >Remember Me</label
+                                                    >
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="submit"
+                                                class="btn btn-primary btn-user btn-block"
+                                            >
+                                                Login
+                                            </button>
+                                        </form>
+                                        <hr />
+                                        <div class="text-center">
+                                            <router-link
+                                                class="small"
+                                                :to="{
+                                                    name: 'AdminForgotPassword'
+                                                }"
+                                                >Forgot Password?</router-link
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import Admin from "../../../api/Admin";
+export default {
+    data() {
+        return {
+            form: {
+                email: "",
+                password: "",
+                remember: false
+            },
+            errors: []
+        };
+    },
+    methods: {
+        login() {
+            Admin.login(this.form)
+                .then(res => {
+                    localStorage.setItem("token", res.data.token);
+                    localStorage.setItem("auth", "true");
+                    localStorage.setItem(
+                        "authnticated admin",
+                        JSON.stringify(res.data.admin)
+                    );
+                    this.$router.push({ name: "Main" });
+                })
+                .catch(error => {
+                    this.errors = error.response.data.errors;
+                });
+        }
+    }
+};
+</script>
+
+<style>
+.cont {
+    width: 100vw;
+    height: 100vh;
+}
+</style>
